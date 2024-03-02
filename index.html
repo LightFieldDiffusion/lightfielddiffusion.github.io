@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="LFD: Light Field Diffusion for Single-View Novel View Synthesis">
+  <meta name="keywords" content="LFD, Diffusion, LDM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LFD: Light Field Diffusion for Single-View Novel View Synthesis</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">LFD: Light Field Diffusion for Single-View Novel View Synthesis</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://Yuukino22.github.io">Yifeng Xiong</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://ics.uci.edu/~haoyum3">Haoyu Ma</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=c6wKvwgAAAAJ&hl=en">Shanlin Sun</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=GdIW8DUAAAAJ&hl=en">Kun Han</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=2X3D1-4AAAAJ&hl=en">Hao Tang</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://ics.uci.edu/~xhx/">Xiaohui Xie</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of California, Irvine</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2309.11525"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="."
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body is-centered has-text-centered">
+      <p style="background-color:lightgoldenrodyellow">
+      📖<strong>TL;DR</strong>: Light Field Diffusion can generate novel views from a <a style="color: purple; font-weight: bold;">single reference image</a>. By transforming the camera pose matrices into <a style="color: blue; font-weight: bold;">light field encoding</a>, our method imposes <a style="color: green; font-weight: bold;">local pixel-wise constraints</a> within the diffusion process, fostering enhanced view consistency.           
+      </p>
+    </div>
+  </div> 
+</section>
+
+<div style="text-align: center;">
+  <img src="./static/images/large_zeroshot.png" style="width:900px; margin: 0 auto; display: block;">
+</div>
+
+  
+<!-- Abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Single-view novel view synthesis (NVS), the task of generating images from new viewpoints based on a single reference image, is important but challenging in computer vision. 
+            Recent advancements in NVS have leveraged Denoising Diffusion Probabilistic Models (DDPMs) for their exceptional ability to produce high-fidelity images. 
+            However, current diffusion-based methods typically utilize camera pose matrices to globally and implicitly enforce 3D constraints, which can lead to inconsistencies in images generated from varying viewpoints, particularly in regions with complex textures and structures.
+            </p>
+            <p>
+            To address these limitations, we present Light Field Diffusion (LFD), a novel conditional diffusion-based approach that transcends the conventional reliance on camera pose matrices. 
+            Starting from the camera pose matrices, LFD transforms them into light field encoding, with the same shape as the reference image, to describe the direction of each ray. 
+            By integrating light field encoding with the reference image, our method imposes local pixel-wise constraints within the diffusion process, fostering enhanced novel view consistency. 
+            Our approach not only involves training image space diffusion models on datasets like ShapeNet Car and NMR but also includes fine-tuning a pre-trained latent diffusion model on the Objaverse dataset. 
+            This enables our latent LFD model to exhibit remarkable zero-shot generalization capabilities across out-of-distribution datasets like RTMV and GSO, as well as in-the-wild images. 
+            Experiments demonstrate that LFD not only produces high-fidelity images but also achieves superior 3D consistency in complex regions, outperforming existing novel view synthesis methods.
+           </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->    
+</div></section>
+
+<!-- Method -->
+ <section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p> 
+            We present a novel framework called Light Field Diffusion, an end-to-end conditional diffusion model designed for synthesizing novel views using a single reference image. 
+            Instead of directly employing camera pose matrices, we employ a transformation into pixel-wise light field encoding. 
+            This approach harnesses the advantages of local pixel-wise constraints, resulting in a significant enhancement in model performance and efficiency.
+          </p> 
+    
+          <p>
+            We train the Light Field Diffusion on both latent space and image space. In latent space, we finetune a pre-trained latent diffusion model on the Objaverse dataset. 
+            In image space, we train a conditional DDPM on the ShapeNet Car and NMR dataset.
+          </p> 
+          <p>
+            Our method is demonstrated to effectively synthesize novel views that maintain consistency with the reference image, ensuring viewpoint coherence and producing high-quality results. 
+            Our latent Light Field Diffusion model also showcases exceptional ability for zero-shot generalization to out-of-distribution datasets such as RTMV and GSO, as well as in-the-wild images.
+          </p>
+          <div>
+            <span class="center"><img src="./static/images/framework.png" style="width:900px;"></span>
+          </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</section>
+
+
+
+<!--  Results -->
+
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-">
+          <h2 class="title is-3">LFD Novel View Synthesis Results</h2>
+          <div class="content has-text-justified">
+        <img src="./static/images/multiview_obj_gso.png" alt="" width="1000">
+            <p> 
+            NVS on the Objaverse and GSO datasets. 
+            The first two rows show results on the Objaverse dataset. 
+            The third row shows results on the GSO dataset. 
+            We set the first image as a reference, randomly generate 10 novel views, and directly show results without cherry-picking.
+          </p> 
+        <img src="./static/images/in_wild.png" alt="" width="1000">
+          <p>
+            NVS on in-the-wild images. 
+            The first column displays the input view, while the subsequent columns showcase the diverse and high-resolution novel views generated by our model, illustrating its effectiveness in synthesizing detailed and varied perspectives from a single input.
+          <p>
+          </div>
+    </div>
+  
+  </div></div></div>
+</section>
+
+
+<section class="hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-">
+        <h2 class="title is-3"></h2>
+        <div class="content has-text-justified">
+          <table width="800" border="0">
+        <tbody>
+
+          <tr>
+            <td width="16.6%" style="text-align:center;">Input view</td>
+            <td width="16.6%" style="text-align:center;">LFD result</td>
+            <td width="16.6%" style="text-align:center;">Input view</td>
+            <td width="16.6%" style="text-align:center;">LFD result</td>
+            <td width="16.6%" style="text-align:center;">Input view</td>
+            <td width="16.6%" style="text-align:center;">LFD result</td>
+          </tr>
+          
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/c2259d28f6064e2d8c398c29085020ff.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/c2259d28f6064e2d8c398c29085020ff.mp4">
+                <video preload="auto" width="256" src="./static/videos/c2259d28f6064e2d8c398c29085020ff.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/dd8299987e54472e8454a58d50688978.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/dd8299987e54472e8454a58d50688978.mp4">
+                <video preload="auto" width="256" src="./static/videos/dd8299987e54472e8454a58d50688978.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/8e1b46fcc3144809b3aec69028eb1811.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/8e1b46fcc3144809b3aec69028eb1811.mp4">
+                <video preload="auto" width="256" src="./static/videos/8e1b46fcc3144809b3aec69028eb1811.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/9a2a8748b33e48b884437906482f1e90.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/9a2a8748b33e48b884437906482f1e90.mp4">
+                <video preload="auto" width="256" src="./static/videos/9a2a8748b33e48b884437906482f1e90.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/2eac18e431e14c9b94ff96a60cc8952a.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/2eac18e431e14c9b94ff96a60cc8952a.mp4">
+                <video preload="auto" width="256" src="./static/videos/2eac18e431e14c9b94ff96a60cc8952a.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/7de95c805bde4c01bbe5d88ce558892f.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/7de95c805bde4c01bbe5d88ce558892f.mp4">
+                <video preload="auto" width="256" src="./static/videos/7de95c805bde4c01bbe5d88ce558892f.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/5ebb20b9014e4b9c803191c7bb43395f.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/5ebb20b9014e4b9c803191c7bb43395f.mp4">
+                <video preload="auto" width="256" src="./static/videos/5ebb20b9014e4b9c803191c7bb43395f.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/5320bca3c2fc435ca55729cf2cfb357a.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/5320bca3c2fc435ca55729cf2cfb357a.mp4">
+                <video preload="auto" width="256" src="./static/videos/5320bca3c2fc435ca55729cf2cfb357a.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/2c146683709b44dca0fed8ecc62fc639.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/2c146683709b44dca0fed8ecc62fc639.mp4">
+                <video preload="auto" width="256" src="./static/videos/2c146683709b44dca0fed8ecc62fc639.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/7405dba46f4740b5bd17545dd0466833.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/7405dba46f4740b5bd17545dd0466833.mp4">
+                <video preload="auto" width="256" src="./static/videos/7405dba46f4740b5bd17545dd0466833.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/98bce40f13c249abb228e5d8f01448a5.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/98bce40f13c249abb228e5d8f01448a5.mp4">
+                <video preload="auto" width="256" src="./static/videos/98bce40f13c249abb228e5d8f01448a5.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/57b5432b2e8146f49cc21d2c20643db5.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/57b5432b2e8146f49cc21d2c20643db5.mp4">
+                <video preload="auto" width="256" src="./static/videos/57b5432b2e8146f49cc21d2c20643db5.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/e1836034e68a44cf93ea6c6c8b81b4e6.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/e1836034e68a44cf93ea6c6c8b81b4e6.mp4">
+                <video preload="auto" width="256" src="./static/videos/e1836034e68a44cf93ea6c6c8b81b4e6.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/b02d1ecab8e7483fbd15a775a688a78b.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/b02d1ecab8e7483fbd15a775a688a78b.mp4">
+                <video preload="auto" width="256" src="./static/videos/b02d1ecab8e7483fbd15a775a688a78b.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/35ee31fb95994320bfa3641676d512ae.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/35ee31fb95994320bfa3641676d512ae.mp4">
+                <video preload="auto" width="256" src="./static/videos/35ee31fb95994320bfa3641676d512ae.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+              <img src="./static/images/0f3e28bf63b343daa35772f8d308fa2a.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/0f3e28bf63b343daa35772f8d308fa2a.mp4">
+                <video preload="auto" width="256" src="./static/videos/0f3e28bf63b343daa35772f8d308fa2a.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/b8b5076734ec4086bd94c159ed25ef89.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/b8b5076734ec4086bd94c159ed25ef89.mp4">
+                <video preload="auto" width="256" src="./static/videos/b8b5076734ec4086bd94c159ed25ef89.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/158970a7d7a044588235c2e73793fe41.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/158970a7d7a044588235c2e73793fe41.mp4">
+                <video preload="auto" width="256" src="./static/videos/158970a7d7a044588235c2e73793fe41.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/f60c11d2cf7944f88a5612138281db8d.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/f60c11d2cf7944f88a5612138281db8d.mp4">
+                <video preload="auto" width="256" src="./static/videos/f60c11d2cf7944f88a5612138281db8d.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/58153bc3fba24cc4a7e50845aef6dcdf.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/58153bc3fba24cc4a7e50845aef6dcdf.mp4">
+                <video preload="auto" width="256" src="./static/videos/58153bc3fba24cc4a7e50845aef6dcdf.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/8016a7cd90b74744a004d45d039189be.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/8016a7cd90b74744a004d45d039189be.mp4">
+                <video preload="auto" width="256" src="./static/videos/8016a7cd90b74744a004d45d039189be.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/dee8746289414db4b39e3a07fc0ffe7b.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/dee8746289414db4b39e3a07fc0ffe7b.mp4">
+                <video preload="auto" width="256" src="./static/videos/dee8746289414db4b39e3a07fc0ffe7b.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/296737f33d404f33a3376acb4d616cc5.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/296737f33d404f33a3376acb4d616cc5.mp4">
+                <video preload="auto" width="256" src="./static/videos/296737f33d404f33a3376acb4d616cc5.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/8911bc54549543e4a05be2c2e251f6da.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/8911bc54549543e4a05be2c2e251f6da.mp4">
+                <video preload="auto" width="256" src="./static/videos/8911bc54549543e4a05be2c2e251f6da.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/9b60605a21fd471c952827b483b540a7.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/9b60605a21fd471c952827b483b540a7.mp4">
+                <video preload="auto" width="256" src="./static/videos/9b60605a21fd471c952827b483b540a7.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/9aa41f88b5094c20837091d3b9a26380.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/9aa41f88b5094c20837091d3b9a26380.mp4">
+                <video preload="auto" width="256" src="./static/videos/9aa41f88b5094c20837091d3b9a26380.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/c1964bd94f034bfab57012ac821e1cb8.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/c1964bd94f034bfab57012ac821e1cb8.mp4">
+                <video preload="auto" width="256" src="./static/videos/c1964bd94f034bfab57012ac821e1cb8.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+
+          <tr class="video-row">
+            
+            <td style="text-align: center;">
+                <img src="./static/images/6c460befb0b643ea916d1b1c13dbf126.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/6c460befb0b643ea916d1b1c13dbf126.mp4">
+                <video preload="auto" width="256" src="./static/videos/6c460befb0b643ea916d1b1c13dbf126.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+            <td style="text-align: center;">
+              <img src="./static/images/3f4604dda6dd42a582f4edf3f5ba8552.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/3f4604dda6dd42a582f4edf3f5ba8552.mp4">
+                <video preload="auto" width="256" src="./static/videos/3f4604dda6dd42a582f4edf3f5ba8552.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+            
+            <td style="text-align: center;">
+              <img src="./static/images/4aef22c431e2438d9344d5f626fd5f65.png">
+            </td>
+            
+            <td style="text-align: center;">
+              <a href="./static/videos/4aef22c431e2438d9344d5f626fd5f65.mp4">
+                <video preload="auto" width="256" src="./static/videos/4aef22c431e2438d9344d5f626fd5f65.mp4" autoplay="" loop="" controls="" muted="">
+              </video></a>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+        </div>
+
+        </div>
+      </div>
+    </div>
+</section>
+
+  
+
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-">
+          <h2 class="title is-3">Comparison</h2>
+          <div class="content has-text-justified">
+        <div>
+            <span class="center"><img src="./static/images/rtmv_compare.png" alt="" width="1000">
+          </div>
+        <p>
+          NVS on the RTMV dataset. Note that RTMV dataset is out-of-distribution and is a very challenge task.
+          All these examples illustrate the advanced capability of our model in generating coherent and detailed images under large camera viewpoint changes.
+        <p>
+        <div>
+            <span class="center"><img src="./static/images/obj_compare.png" alt="" width="1000">
+          </div>
+          <p>
+            NVS on the Objaverse dataset. We use the first image of each scene as an input view and synthesize two randomly novel views. 
+            Our method can generate more consistent and more view guaranteed results compare with baselines.
+          <p>
+        
+    </div>
+  </div>
+  
+  </div></div></div>
+</section>
+
+
+
+  
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{xiong2023light,
+  author    = {Yifeng Xiong and Haoyu Ma and Shanlin Sun and Kun Han and Hao Tang and Xiaohui Xie},
+  title     = {Light Field Diffusion for Single-View Novel View Synthesis},
+  journal   = {arxiv preprint},
+  year      = {2023},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://arxiv.org/abs/2309.11525">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href=""https://yuukino22.github.io/" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
