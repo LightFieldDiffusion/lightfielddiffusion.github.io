@@ -140,7 +140,7 @@
                 </a>
               </span> -->
               <!-- Code Link. -->
-              <span class="link-block">
+              <!-- <span class="link-block">
                 <a href="."
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
@@ -148,7 +148,7 @@
                   </span>
                   <span>Code</span>
                   </a>
-              </span>
+              </span> -->
               <!-- Dataset Link. -->
               <!-- <span class="link-block">
                 <a href="https://github.com/google/nerfies/releases/tag/0.1"
@@ -196,42 +196,46 @@
             However, current diffusion-based methods typically utilize camera pose matrices to globally and implicitly enforce 3D constraints, which can lead to inconsistencies in images generated from varying viewpoints, particularly in regions with complex textures and structures.
             </p>
             <p>
-            To address these limitations, we present Light Field Diffusion (LFD), a novel conditional diffusion-based approach that transcends the conventional reliance on camera pose matrices. 
-            Starting from the camera pose matrices, LFD transforms them into light field encoding, with the same shape as the reference image, to describe the direction of each ray. 
-            By integrating light field encoding with the reference image, our method imposes local pixel-wise constraints within the diffusion process, fostering enhanced novel view consistency. 
-            Our approach not only involves training image space diffusion models on datasets like ShapeNet Car and NMR but also includes fine-tuning a pre-trained latent diffusion model on the Objaverse dataset. 
-            This enables our latent LFD model to exhibit remarkable zero-shot generalization capabilities across out-of-distribution datasets like RTMV and GSO, as well as in-the-wild images. 
-            Experiments demonstrate that LFD not only produces high-fidelity images but also achieves superior 3D consistency in complex regions, outperforming existing novel view synthesis methods.
+              To address these limitations, we present Light Field Diffusion (LFD), a novel conditional diffusion-based approach that transcends the conventional reliance on camera pose matrices. 
+              Starting from the camera pose matrices, LFD transforms them into light field encoding, with the same shape as the reference image, to describe the direction of each ray. 
+              By integrating light field encoding with the reference image, our method imposes local pixel-wise constraints within the diffusion process, fostering enhanced view consistency. 
+              Our approach not only involves training image LFD on the ShapeNet Car dataset but also includes fine-tuning a pre-trained latent diffusion model on the Objaverse dataset. 
+              This enables our latent LFD model to exhibit remarkable zero-shot generalization capabilities across out-of-distribution datasets like RTMV as well as in-the-wild images. 
+              Experiments demonstrate that LFD not only produces high-fidelity images but also achieves superior 3D consistency in complex regions, outperforming existing novel view synthesis methods.
            </p>
         </div>
       </div>
-    </div>
-    <!--/ Abstract. -->    
+    </div>  
 </div></section>
 
+
+
+
 <!-- Method -->
- <section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Method</h2>
-        <div class="content has-text-justified">
+<section class="section">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-">
+          <h2 class="title is-3">Method</h2>
+          <div class="content has-text-justified">
           <p> 
             We present a novel framework called Light Field Diffusion, an end-to-end conditional diffusion model designed for synthesizing novel views using a single reference image. 
-            Instead of directly employing camera pose matrices, we employ a transformation into pixel-wise light field encoding. 
-            This approach harnesses the advantages of local pixel-wise constraints, resulting in a significant enhancement in model performance and efficiency.
+            Instead of directly using camera pose matrices, we employ a transformation into pixel-wise light field encoding. 
+            This approach harnesses the advantages of local pixel-wise constraints, resulting in a significant enhancement in model performance.
           </p> 
     
           <p>
-            We train the Light Field Diffusion on both latent space and image space. In latent space, we finetune a pre-trained latent diffusion model on the Objaverse dataset. 
-            In image space, we train a conditional DDPM on the ShapeNet Car and NMR dataset.
+            We train the Light Field Diffusion on both latent space and image space. 
+            In latent space, we finetune a pre-trained latent diffusion model on the Objaverse dataset. 
+            In image space, we train a conditional DDPM on the ShapeNet Car dataset.
           </p> 
           <p>
             Our method is demonstrated to effectively synthesize novel views that maintain consistency with the reference image, ensuring viewpoint coherence and producing high-quality results. 
-            Our latent Light Field Diffusion model also showcases exceptional ability for zero-shot generalization to out-of-distribution datasets such as RTMV and GSO, as well as in-the-wild images.
+            Our latent Light Field Diffusion model also showcases the exceptional ability for zero-shot generalization to out-of-distribution datasets such as RTMV and in-the-wild images.
           </p>
           <div>
-            <span class="center"><img src="./static/images/framework.png" style="width:900px;"></span>
+            <img src="./static/images/framework.png" alt="" width="1000">
           </div>
           </div>
 
@@ -261,7 +265,8 @@
         <img src="./static/images/in_wild.png" alt="" width="1000">
           <p>
             NVS on in-the-wild images. 
-            The first column displays the input view, while the subsequent columns showcase the diverse and high-resolution novel views generated by our model, illustrating its effectiveness in synthesizing detailed and varied perspectives from a single input.
+            The first column displays the input view, while the subsequent columns showcase the diverse and high-resolution novel views generated by our model.
+            Our latent LFD successfully generates images from arbitrary views with consistent appearance.
           <p>
           </div>
     </div>
@@ -648,9 +653,9 @@
           <div class="content has-text-justified">
         <div>
             <span class="center"><img src="./static/images/rtmv_compare.png" alt="" width="1000">
-          </div>
+        </div>
         <p>
-          NVS on the RTMV dataset. Note that RTMV dataset is out-of-distribution and is a very challenge task.
+          NVS on the RTMV dataset. Note that RTMV dataset is out-of-distribution and is a very challenging task.
           All these examples illustrate the advanced capability of our model in generating coherent and detailed images under large camera viewpoint changes.
         <p>
         <div>
@@ -658,9 +663,15 @@
           </div>
           <p>
             NVS on the Objaverse dataset. We use the first image of each scene as an input view and synthesize two randomly novel views. 
-            Our method can generate more consistent and more view guaranteed results compare with baselines.
+            Our method can generate more consistent and more view-guaranteed results compared with baselines.
           <p>
-        
+        <div>
+          <span class="center"><img src="./static/images/diversity.png" alt="" width="1000">
+        </div>
+        <p>
+          Comparison of diversity. Given an input view and a target viewpoint, we randomly generate 3 samples with different seeds. 
+          The baseline model sometimes cannot guarantee the coherence of viewpoint across different samples.
+        <p>
     </div>
   </div>
   
